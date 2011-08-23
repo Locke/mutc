@@ -1,4 +1,4 @@
-import QtQuick 1.0
+import Qt 4.7
 
 Rectangle {
     id: options_dialog
@@ -19,7 +19,10 @@ Rectangle {
         for (var i = 0; i < settings_column.children.length; i++) {
             var item = settings_column.children[i]
             if (item.configValue) {
-                item.text = config.get(item.configValue)
+                if(item.current)
+                    item.current = config.get(item.configValue)
+                else
+                    item.text = config.get(item.configValue)
             }
         }
     }
@@ -114,6 +117,39 @@ Rectangle {
                     property string configValue: "limits.buffer"
                     property string configType: "int"
                 }
+
+                Text {
+                    text: "Graphics"
+                    color: style.textColor
+                    font.bold:  true
+                    width: 310
+                    height: 30
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                ComboBox{
+                    model: graphicsModel
+                    current: "raster"
+                    elementsToShow: 3
+
+                    property string configValue: "graphics"
+                    property string configType: "str"
+
+                    ListModel{
+                        id: graphicsModel
+
+                        ListElement{
+                            content: "raster"
+                            icon: ""
+                        }
+
+                        ListElement{
+                            content: "opengl"
+                            icon: ""
+                        }
+                    }
+                }
             }
         }
     }
@@ -146,7 +182,10 @@ Rectangle {
                         console.log(item.configValue)
 
                         if (config) {
-                            config.set(item.configValue, item.text)
+                            if(item.current)
+                                config.set(item.configValue, item.current)
+                            else
+                                config.set(item.configValue, item.text)
                         }
                     }
                 }
